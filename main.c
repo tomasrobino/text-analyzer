@@ -15,25 +15,58 @@ void readFile(char name[]) {
     long byteAmount = position;
     printf("byteAmount: %ld\n", byteAmount);
     rewind(file);
-    position = ftell(file);
     long charAmount = 0;
-    long wordCounter = 0;
+    long wordLength = 0;
     long wordTotal = 0;
     for (int i = 0; i < byteAmount; i++) {
         const int currentChar = fgetc(file);
         //ASCII 32 is space, 127 is DEL, 160 is NBSP
         if (currentChar > 32 && currentChar != 127 && currentChar != 160) {
-            wordCounter++;
+            wordLength++;
             charAmount++;
         } else {
-            if (wordCounter != 0) {
-                wordCounter = 0;
+            if (wordLength != 0) {
+                wordLength = 0;
                 wordTotal++;
             }
         }
         ftell(file);
     }
+    rewind(file);
+
+    //Creating wordArray, allocating all words
+    char** wordArray = malloc(sizeof(char*)*wordTotal);
+    long wordCounter = 0;
+    wordLength = 0;
+
+    for (int i = 0; i < byteAmount; i++) {
+        const int currentChar = fgetc(file);
+        //ASCII 32 is space, 127 is DEL, 160 is NBSP
+        if (currentChar > 32 && currentChar != 127 && currentChar != 160) {
+            wordLength++;
+        } else {
+            if (wordLength != 0) {
+                wordArray[wordCounter] = malloc(wordLength+1);
+                position = ftell(file);
+                rewind(file);
+                fseek(file, position-wordLength-1, SEEK_CUR);
+                fread(wordArray[wordCounter], 1, wordLength, file);
+                wordArray[wordCounter][wordLength] = '\0';
+                printf("%s", wordArray[wordCounter]);
+                wordLength = 0;
+                wordCounter++;
+            }
+        }
+        ftell(file);
+    }
+    puts("");
+
     printf("charAmount (without spaces, new lines, etc.): %ld\n", charAmount);
     printf("wordTotal: %ld\n", wordTotal);
+    printf("words:\n");
+    for (int i = 0; i<wordTotal;i++) {
+        printf("%s\n", wordArray[i]);
+    }
+    free(wordArray);
     fclose(file);
 }
