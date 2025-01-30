@@ -48,24 +48,27 @@ void readFile(char name[]) {
             if (wordLength != 0) {
                 wordArray[wordCounter] = malloc(wordLength+1);
                 position = ftell(file);
+                //-1 is EOF, correct position
+                if (currentChar == -1) {
+                    position++;
+                }
                 rewind(file);
                 fseek(file, position-wordLength-1, SEEK_CUR);
-                fread(wordArray[wordCounter], 1, wordLength, file);
+                fread(wordArray[wordCounter], 1, wordLength+1, file);
                 wordArray[wordCounter][wordLength] = '\0';
-                printf("%s", wordArray[wordCounter]);
                 wordLength = 0;
                 wordCounter++;
             }
         }
-        ftell(file);
     }
     puts("");
 
     printf("charAmount (without spaces, new lines, etc.): %ld\n", charAmount);
     printf("wordTotal: %ld\n", wordTotal);
     printf("words:\n");
+
     for (int i = 0; i<wordTotal;i++) {
-        printf("%s\n", wordArray[i]);
+        printf("%s ", wordArray[i]);
     }
     free(wordArray);
     fclose(file);
