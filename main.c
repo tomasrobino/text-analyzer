@@ -2,6 +2,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+typedef struct node_t {
+    char* data;
+    struct node_t *next;
+} node;
+
 void readFile(char name[]);
 
 int main(void) {
