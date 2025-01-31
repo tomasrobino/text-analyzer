@@ -1,3 +1,4 @@
+#include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -42,7 +43,7 @@ void readFile(char name[]) {
     for (int i = 0; i < byteAmount; i++) {
         const int currentChar = fgetc(file);
         //ASCII 32 is space, 127 is DEL, 160 is NBSP
-        if (currentChar > 32 && currentChar != 127 && currentChar != 160) {
+        if (isalpha(currentChar)) {
             wordLength++;
         } else {
             if (wordLength != 0) {
