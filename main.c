@@ -30,7 +30,6 @@ void readFile(char name[]) {
     long wordTotal = 0;
     for (int i = 0; i < byteAmount; i++) {
         const int currentChar = fgetc(file);
-        //ASCII 32 is space, 127 is DEL, 160 is NBSP
         if (isalpha(currentChar)) {
             wordLength++;
             charAmount++;
