@@ -23,10 +23,7 @@ void readFile(char name[]) {
     long byteAmount = position;
     printf("byteAmount: %ld\n", byteAmount);
     rewind(file);
-    node* head = malloc(sizeof(node));
-    head->word = NULL;
-    head->next = NULL;
-    head->amount = 0;
+    node* head = NULL;
     node* currentNode = head;
     long charAmount = 0;
     long wordLength = 0;
@@ -40,30 +37,40 @@ void readFile(char name[]) {
         } else {
             if (wordLength != 0) {
                 char* word = malloc(wordLength+1);
+                fseek(file, -wordLength-1, SEEK_CUR);
                 fread(word, 1, wordLength+1, file);
                 word[wordLength] = '\0';
-                int end = 0;
-                node* prevNode = NULL;
-                while (currentNode != NULL && !end) {
-                    end = strcmp(word, currentNode->word);
-                    if (end) {
-                        prevNode = currentNode;
-                        currentNode = currentNode->next;
-                    }
+                for (int j = 0; j<wordLength+1;j++) {
+                    word[j] = (char) tolower(word[j]);
                 }
-                //Word not found in list
-                if (currentNode == NULL) {
-                    node* newNode = malloc(sizeof(node));
-                    newNode->amount = 1;
-                    newNode->word = word;
-                    newNode->next = NULL;
-                    //prevNode should never be NULL
-                    if (prevNode != NULL) {
-                        prevNode->next = newNode;
-                    } else exit(99);
+                if (head == NULL) {
+                    head = malloc(sizeof(node));
+                    head->next = NULL;
+                    head->amount = 1;
+                    head->word = word;
                 } else {
-                    //Word found
-                    currentNode->amount++;
+                    int end = 0;
+                    node* prevNode = NULL;
+                    while (currentNode != NULL && !end) {
+                        end = !strcmp(word, currentNode->word);
+                        if (!end) {
+                            prevNode = currentNode;
+                            currentNode = currentNode->next;
+                        }
+                    }
+                    //Word not found in list
+                    if (currentNode == NULL) {
+                        node* newNode = malloc(sizeof(node));
+                        newNode->amount = 1;
+                        newNode->word = word;
+                        newNode->next = NULL;
+                        //prevNode should never be NULL
+                        prevNode->next = newNode;
+                    } else {
+                        //Word found
+                        free(word);
+                        currentNode->amount++;
+                    }
                 }
                 currentNode = head;
                 wordLength = 0;
@@ -71,11 +78,9 @@ void readFile(char name[]) {
             }
         }
     }
-    free(head);
-    head = currentNode->next;
-    currentNode = currentNode->next;
     rewind(file);
     puts("");
+    currentNode = head;
 
     printf("charAmount (without spaces, new lines, etc.): %ld\n", charAmount);
     printf("wordTotal: %ld\n", wordTotal);
@@ -83,13 +88,14 @@ void readFile(char name[]) {
 
     for (int i = 0; i<wordTotal;i++) {
         if (currentNode != NULL) {
-            printf("word: %s, amount: %d", currentNode->word, currentNode->amount);
+            printf("word: %s, amount: %d\n", currentNode->word, currentNode->amount);
             currentNode = currentNode->next;
         }
     }
     while (head != NULL) {
         node* auxNode = head;
         head = head->next;
+        free(auxNode->word);
         free(auxNode);
     }
     fclose(file);
