@@ -37,7 +37,9 @@ void readFile(char name[]) {
         } else {
             if (wordLength != 0) {
                 char* word = malloc(wordLength+1);
-                fseek(file, -wordLength-1, SEEK_CUR);
+                if (currentChar == -1) {
+                    fseek(file, -wordLength, SEEK_CUR);
+                } else fseek(file, -wordLength-1, SEEK_CUR);
                 fread(word, 1, wordLength+1, file);
                 word[wordLength] = '\0';
                 for (int j = 0; j<wordLength+1;j++) {
