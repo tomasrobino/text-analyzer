@@ -67,7 +67,9 @@ void readFile(char name[]) {
                         newNode->word = word;
                         newNode->next = NULL;
                         //prevNode should never be NULL
-                        prevNode->next = newNode;
+                        if (prevNode != NULL) {
+                            prevNode->next = newNode;
+                        } else free(newNode);
                     } else {
                         //Word found
                         free(word);
