@@ -6,10 +6,12 @@
 typedef struct node_t {
     int amount;
     char* word;
-    struct node_t *next;
+    struct node_t *left;
+    struct node_t *right;
 } node;
 
 void readFile(char name[]);
+void printTree(const node* node);
 
 int main(void) {
     readFile("test.txt");
@@ -46,17 +48,22 @@ void readFile(char name[]) {
                 }
                 if (head == NULL) {
                     head = malloc(sizeof(node));
-                    head->next = NULL;
+                    head->left = NULL;
+                    head->right = NULL;
                     head->amount = 1;
                     head->word = word;
                 } else {
-                    int end = 0;
+                    int comparison = 1;
                     node* prevNode = NULL;
-                    while (currentNode != NULL && !end) {
-                        end = !strcmp(word, currentNode->word);
-                        if (!end) {
+                    while (currentNode != NULL && comparison) {
+                        comparison = strcmp(word, currentNode->word);
+                        if (comparison) {
                             prevNode = currentNode;
-                            currentNode = currentNode->next;
+                            if (comparison < 0) {
+                                currentNode = currentNode->left;
+                            } else {
+                                currentNode = currentNode->right;
+                            }
                         }
                     }
                     //Word not found in list
@@ -64,10 +71,16 @@ void readFile(char name[]) {
                         node* newNode = malloc(sizeof(node));
                         newNode->amount = 1;
                         newNode->word = word;
-                        newNode->next = NULL;
+                        newNode->left = NULL;
+                        newNode->right = NULL;
                         //prevNode should never be NULL
                         if (prevNode != NULL) {
-                            prevNode->next = newNode;
+                            comparison = strcmp(word, prevNode->word);
+                            if (comparison < 0) {
+                                prevNode->left = newNode;
+                            } else {
+                                prevNode->right = newNode;
+                            }
                         } else free(newNode);
                     } else {
                         //Word found
@@ -88,18 +101,41 @@ void readFile(char name[]) {
     printf("charAmount (without spaces, new lines, etc.): %ld\n", charAmount);
     printf("wordTotal: %ld\n", wordTotal);
     printf("words:\n");
-
-    for (int i = 0; i<wordTotal;i++) {
-        if (currentNode != NULL) {
-            printf("word: %s, amount: %d\n", currentNode->word, currentNode->amount);
-            currentNode = currentNode->next;
+    printTree(currentNode);
+/*
+    if (currentNode != NULL) {
+        node* prevNode = currentNode;
+        int i = 0;
+        while (i < wordTotal) {
+            if (currentNode != NULL) {
+                printf("word: %s, amount: %d\n", currentNode->word, currentNode->amount);
+                prevNode = currentNode;
+                currentNode = currentNode->left;
+                i++;
+            } else {
+                currentNode = prevNode->right;
+            }
         }
+
+        while (head != NULL) {
+            node* auxNode = head;
+            head = head->next;
+            free(auxNode->word);
+            free(auxNode);
+        }
+
     }
-    while (head != NULL) {
-        node* auxNode = head;
-        head = head->next;
-        free(auxNode->word);
-        free(auxNode);
-    }
+*/
     fclose(file);
+}
+
+void printTree(const node* node) {
+    if (node == NULL) return;
+    printf("word: %s, amount: %d\n", node->word, node->amount);
+    if (node->left != NULL ) {
+        printTree(node->left);
+    }
+    if (node->right != NULL) {
+        printTree(node->right);
+    }
 }
