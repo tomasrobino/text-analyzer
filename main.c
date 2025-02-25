@@ -12,6 +12,7 @@ typedef struct node_t {
 
 void readFile(char name[]);
 void printTree(const node* node);
+void freeTree(const node* node);
 
 int main(void) {
     readFile("test.txt");
@@ -114,4 +115,15 @@ void printTree(const node* node) {
     if (node->right != NULL) {
         printTree(node->right);
     }
+}
+
+void freeTree(node* node) {
+    if (node == NULL) return;
+    if (node->left != NULL ) {
+        printTree(node->left);
+    }
+    if (node->right != NULL) {
+        printTree(node->right);
+    }
+    free(node);
 }
