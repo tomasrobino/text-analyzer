@@ -11,9 +11,8 @@ typedef struct node_t {
 } node;
 
 void readFile(char name[]);
+void iterateTree(node* head, void (*callback)(node*));
 void printTree(const node* node);
-void freeTree(node* node);
-
 int main(void) {
     readFile("test.txt");
     return 0;
@@ -97,34 +96,26 @@ void readFile(char name[]) {
     }
     rewind(file);
     puts("");
-    currentNode = head;
 
     printf("charAmount (without spaces, new lines, etc.): %ld\n", charAmount);
     printf("wordTotal: %ld\n", wordTotal);
     printf("words:\n");
-    printTree(currentNode);
-    freeTree(currentNode);
+    iterateTree(head, printTree);
+    iterateTree(head, free);
     fclose(file);
 }
 
 void printTree(const node* node) {
-    if (node == NULL) return;
     printf("word: %s, amount: %d\n", node->word, node->amount);
-    if (node->left != NULL ) {
-        printTree(node->left);
-    }
-    if (node->right != NULL) {
-        printTree(node->right);
-    }
 }
 
-void freeTree(node* node) {
-    if (node == NULL) return;
-    if (node->left != NULL ) {
-        printTree(node->left);
+void iterateTree(node* head, void (*callback)(node*)) {
+    if (head == NULL) return;
+    if (head->left != NULL ) {
+        iterateTree(head->left, callback);
     }
-    if (node->right != NULL) {
-        printTree(node->right);
+    if (head->right != NULL) {
+        iterateTree(head->right, callback);
     }
-    free(node);
+    callback(head);
 }
