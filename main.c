@@ -102,30 +102,6 @@ void readFile(char name[]) {
     printf("wordTotal: %ld\n", wordTotal);
     printf("words:\n");
     printTree(currentNode);
-/*
-    if (currentNode != NULL) {
-        node* prevNode = currentNode;
-        int i = 0;
-        while (i < wordTotal) {
-            if (currentNode != NULL) {
-                printf("word: %s, amount: %d\n", currentNode->word, currentNode->amount);
-                prevNode = currentNode;
-                currentNode = currentNode->left;
-                i++;
-            } else {
-                currentNode = prevNode->right;
-            }
-        }
-
-        while (head != NULL) {
-            node* auxNode = head;
-            head = head->next;
-            free(auxNode->word);
-            free(auxNode);
-        }
-
-    }
-*/
     fclose(file);
 }
 
