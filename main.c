@@ -12,7 +12,7 @@ typedef struct node_t {
 
 void readFile(char name[]);
 void printTree(const node* node);
-void freeTree(const node* node);
+void freeTree(node* node);
 
 int main(void) {
     readFile("test.txt");
@@ -103,6 +103,7 @@ void readFile(char name[]) {
     printf("wordTotal: %ld\n", wordTotal);
     printf("words:\n");
     printTree(currentNode);
+    freeTree(currentNode);
     fclose(file);
 }
 
